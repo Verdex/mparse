@@ -13,9 +13,13 @@ pub enum Data {
     Table { list : Vec<Data>, structure : Vec<Field> },
 }
 
-fn data_field(rule : &str, data : Data) -> Result<Data, ()> {
-    let rule = rule.to_string();
-    Ok(Data::Field( Box::new(Field { rule, data })))
+#[macro_export]
+macro_rules! define {
+    ($name:ident, $s:ident blah $e:expr) => { 
+        fn $name($s : &mut mparse::input::Input) -> Result<mparse::Data, ()> {
+            $e
+        }
+    };
 }
 
 // anything
