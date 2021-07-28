@@ -22,27 +22,82 @@ macro_rules! define {
     };
 }
 
-// anything
-// match string
-//  invoke rule, zero or more, one or more, zero or one 
-// and
-// or
+#[macro_export]
+macro_rules! and {
+    { $( $es:expr ),* } => {
+        {
+            let mut list = vec![];
+            let mut structure = vec![];
+
+            $(
+                match $es { 
+                    Ok( mparse::Data::Field(f) ) => structure.push(*f),
+                    Ok( other ) => list.push(other),
+                    Err(e) => return Err(e),
+                }
+            )*
+
+            Ok( mparse::Data::Table{ list, structure } )
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! or {
+    { $( $es:expr ),* } => {
+        {
+            let mut ret = Err(());
+
+            $(
+                if matches!(ret, Err(_)) {
+                    ret = $es;
+                }
+            )*
+
+            ret
+        }
+    };
+}
+
+
+#[macro_export]
+macro_rules! exact {
+    ($s:ident, $value:literal) => {
+        match $s.match_string($value) {
+            Ok(_) => Ok(mparse::Data::Nil),
+            Err(e) => Err(e),
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! any {
+    ($s:ident) => {
+        Ok(mparse::Data::Char($s.get_char()?))
+    };
+}
+
+        /*enum ParseRule {
+            Any,                                                            // Char(char) 
+            MatchString(String),                                            // NIL 
+            InvokeRule(String),                                             // Field
+            ZeroOrMore(Box<ParseRule>),                                     // Table { list }
+            OneOrMore(Box<ParseRule>),                                      // Table { list }
+            ZeroOrOne(Box<ParseRule>),                                      // Table { list }
+            Or(Vec<ParseRule>),                                             // Data
+            And(Vec<ParseRule>),                                            // Table { list, structure }
+        }*/
 #[macro_export]
 macro_rules! parse_rules {
     {$b:block} => {{
+
+
 
         fn i(s : &str) -> mparse::input::Input {
             mparse::input::Input::new(s)
         }
 
-        #[allow(unused_macro)]
-        macro_rules! define {
-            ($name:ident) => {
-                fn $name(input : &mut mparse::input::Input) -> Result<mparse::Data, ()> {
-                    Err(())
-                }
-            };
-        }
+
 
         $b
     }};
