@@ -71,6 +71,13 @@ macro_rules! zero_or_one {
 
 
 #[macro_export]
+macro_rules! invoke_rule {
+    ($input:ident, $name:ident) => {
+        $name($input)
+    }
+}
+
+#[macro_export]
 macro_rules! exact {
     ($s:ident, $value:literal) => {
         match $s.match_string($value) {
