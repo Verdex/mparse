@@ -90,7 +90,10 @@ macro_rules! exact {
 #[macro_export]
 macro_rules! any {
     ($s:ident) => {
-        Ok(mparse::Data::Char($s.get_char()?))
+        match $s.get_char() {
+            Ok(c) => Ok(mparse::Data::Char(c)),
+            Err(e) => Err(e),
+        }
     };
 }
 
