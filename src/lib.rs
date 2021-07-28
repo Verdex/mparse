@@ -59,6 +59,8 @@ macro_rules! or {
     };
 }
 
+#[macro_export]
+
 
 #[macro_export]
 macro_rules! exact {
@@ -92,12 +94,9 @@ macro_rules! parse_rules {
     {$b:block} => {{
 
 
-
         fn i(s : &str) -> mparse::input::Input {
             mparse::input::Input::new(s)
         }
-
-
 
         $b
     }};
@@ -105,11 +104,3 @@ macro_rules! parse_rules {
 
 //#[allow(dead_code)]
 //#[allow(unused_macro)]
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
