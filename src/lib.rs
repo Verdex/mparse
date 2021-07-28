@@ -69,6 +69,44 @@ macro_rules! zero_or_one {
     };
 }
 
+#[macro_export]
+macro_rules! zero_or_more {
+    ( $e:expr ) => {
+        {
+            let mut list = vec![];
+            loop {
+                match $e {
+                    Ok(data) => list.push(data),
+                    Err(_) => break,
+                }
+            }
+            Ok(mparse::Data::Table { list, structure: vec![] })
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! one_or_more {
+    ( $e:expr ) => {
+        {
+            let initial = $e;
+            if matches!(initial, Ok(_)) {
+                let mut list = vec![];
+                list.push(initial.expect("one_or_more initial with Ok was not Ok"));
+                loop {
+                    match $e {
+                        Ok(data) => list.push(data),
+                        Err(_) => break,
+                    }
+                }
+                Ok(mparse::Data::Table { list, structure: vec![] })
+            }
+            else {
+                initial
+            }
+        }
+    };
+}
 
 #[macro_export]
 macro_rules! invoke_rule {
