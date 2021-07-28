@@ -60,6 +60,14 @@ macro_rules! or {
 }
 
 #[macro_export]
+macro_rules! zero_or_one {
+    ( $e:expr ) => {
+        match $e {
+            Ok(data) => Ok(mparse::Data::Table { list: vec![data], structure: vec![] }),
+            Err(_) => Ok(mparse::Data::Table { list: vec![], structure: vec![] })
+        }
+    };
+}
 
 
 #[macro_export]
