@@ -13,14 +13,6 @@ pub enum Data {
     Table { list : Vec<Data>, structure : Vec<Field> },
 }
 
-#[macro_export]
-macro_rules! define {
-    ($name:ident, $s:ident blah $e:expr) => { 
-        fn $name($s : &mut mparse::input::Input) -> Result<mparse::Data, ()> {
-            $e
-        }
-    };
-}
 
 #[macro_export]
 macro_rules! and {
@@ -108,32 +100,7 @@ macro_rules! one_or_more {
     };
 }
 
-#[macro_export]
-macro_rules! invoke_rule {
-    ($input:ident, $name:ident) => {
-        $name($input)
-    }
-}
 
-#[macro_export]
-macro_rules! exact {
-    ($s:ident, $value:literal) => {
-        match $s.match_string($value) {
-            Ok(_) => Ok(mparse::Data::Nil),
-            Err(e) => Err(e),
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! any {
-    ($s:ident) => {
-        match $s.get_char() {
-            Ok(c) => Ok(mparse::Data::Char(c)),
-            Err(e) => Err(e),
-        }
-    };
-}
 
         /*enum ParseRule {
             Any,                                                            // Char(char) 
@@ -149,6 +116,41 @@ macro_rules! any {
 macro_rules! parse_rules {
     {$b:block} => {{
 
+        #[allow(unused_macro)]
+        macro_rules! invoke_rule {
+            ($input:ident, $name:ident) => {
+                $name($input)
+            }
+        }
+
+        #[allow(unused_macro)]
+        macro_rules! any {
+            ($s:ident) => {
+                match $s.get_char() {
+                    Ok(c) => Ok(mparse::Data::Char(c)),
+                    Err(e) => Err(e),
+                }
+            };
+        }
+
+        #[allow(unused_macro)]
+        macro_rules! exact {
+            ($s:ident, $value:literal) => {
+                match $s.match_string($value) {
+                    Ok(_) => Ok(mparse::Data::Nil),
+                    Err(e) => Err(e),
+                }
+            };
+        }
+
+        #[allow(unused_macro)]
+        macro_rules! define {
+            ($name:ident, $s:ident blah $e:expr) => { 
+                fn $name($s : &mut mparse::input::Input) -> Result<mparse::Data, ()> {
+                    $e
+                }
+            };
+        }
 
         fn i(s : &str) -> mparse::input::Input {
             mparse::input::Input::new(s)
